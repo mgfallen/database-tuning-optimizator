@@ -75,7 +75,7 @@ class Knobs:
             "dynamic_shared_memory_type": ["enum", ["posix", "sysv", "windows"], "posix"],  # TODO
 
             # === counted knobs ===
-            "max_prepared_transaction": ["integer", [0, max_connections, max_connections]],
+            "max_prepared_transactions": ["integer", [0, max_connections, max_connections]],
             "hash_mem_multiplier": ["float", [0.0, 4.0, 2.0]],
 
             # === disk knobs ===

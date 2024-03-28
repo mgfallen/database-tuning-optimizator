@@ -122,9 +122,9 @@ celerybeat.pid
 # Environments
 .env
 .venv
-env/
+knobs_env/
 venv/
-ENV/
+knobs_env/
 env.bak/
 venv.bak/
 

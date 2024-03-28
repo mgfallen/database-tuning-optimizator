@@ -1,6 +1,8 @@
 import psycopg2
 import configparser
 
+import knobs as k
+
 
 def read_config(filename='db.ini'):
     config = configparser.ConfigParser()
@@ -28,7 +30,7 @@ def fetch_parameters(connection, parameters):
     try:
         cursor = connection.cursor()
         for parameter in parameters:
-            cursor.execute(f"SELECT {parameter} FROM your_table_name;")
+            cursor.execute(f"SHOW {parameter};")
             result = cursor.fetchall()
             for row in result:
                 variables[parameter].append(row[0])
@@ -42,7 +44,9 @@ def fetch_parameters(connection, parameters):
 
 if __name__ == "__main__":
     config = read_config("db.ini")
-    parameters = ["param1", "param2", "param3"]  # Замените на список параметров, которые вы хотите извлечь
+    knobs_dict = k.Knobs().knobs
+    parameters = knobs_dict.keys()
     connection = connect_to_database(config)
     if connection:
-        fetch_parameters(connection, parameters)
+        a = fetch_parameters(connection, parameters)
+        print(a)
