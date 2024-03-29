@@ -1,11 +1,11 @@
 import gym
 import numpy as np
-from tf2_main.ddpg_tf2 import Agent
+from agents.ddpg_agent import Agent
 from utils.utils import plot_learning_curve
 
 if __name__ == '__main__':
-    env = gym.make('Pendulum-v0')
-    agent = Agent(input_dims=env.obervation_space.shape, env=env, n_actions=env.actions.space.shape[0])
+    env = gym.make('Pendulum-v1')
+    agent = Agent(input_dims=env.observation_space.shape, env=env, n_actions=env.action_space.shape[0])
     n_games = 250
 
     figure_file = 'plots/pendulum.png'

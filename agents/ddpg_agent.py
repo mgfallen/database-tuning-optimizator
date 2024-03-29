@@ -5,6 +5,7 @@ from tensorflow.keras.optimizers import Adam
 from models.buffer import ReplayBuffer
 from models.DDPG import ActorNetwork, CriticNetwork
 
+
 class Agent:
     def __init__(self, input_dims, alpha=0.001, beta=0.002, env=None,
                  gamma=0.99, n_actions=2, max_size=1000000, tau=0.005,
@@ -25,7 +26,7 @@ class Agent:
 
         self.actor.compile(optimizer=Adam(learning_rate=alpha))
         self.critic.compile(optimizer=Adam(learning_rate=beta))
-        self.target_actor.compile(optimizer=Adam(learhing_rate=alpha))
+        self.target_actor.compile(optimizer=Adam(learning_rate=alpha))
         self.target_critic.compile(optimizer=Adam(learning_rate=beta))
 
         self.update_network_parameters(tau=1)
@@ -90,7 +91,7 @@ class Agent:
             new_critic_value = tf.squeeze(self.target_critic(new_states, target_actions, 1))
 
             critic_value = tf.squeeze(self.critic(states, actions), 1)
-            target = reward + self.gamma * new_critic_value * (1 - done)
+            target = rewards + self.gamma * new_critic_value * (1 - done)
             critic_loss = keras.losses.MSE(target, critic_value)
 
         critic_network_gradient = tape.gradient(critic_loss, self.critic_trainable_variables)
@@ -105,6 +106,4 @@ class Agent:
 
         self.actor.optimizer.apply_gradients(zip(actor_network_gradient, self.actor.trainable_variables))
 
-        self.update_network_parameters(tau=0.005)
-
-
+        self.update_network_parameters()
