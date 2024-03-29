@@ -12,16 +12,11 @@ def read_config(filename='db.ini'):
 
 def connect_to_database(config):
     try:
-        connection = psycopg2.connect(
-            host=config['host'],
-            port=config['port'],
-            database=config['database'],
-            user=config['user'],
-            password=config['password']
-        )
+        connection = psycopg2.connect(**config)
         return connection
     except Exception as e:
         print("Error connecting to database:", e)
+        # print(config['host'], config['port'], config['database'], config['user'], config['password'])
         return None
 
 
@@ -44,9 +39,10 @@ def fetch_parameters(connection, parameters):
 
 if __name__ == "__main__":
     config = read_config("db.ini")
-    knobs_dict = k.Knobs().knobs
-    parameters = knobs_dict.keys()
     connection = connect_to_database(config)
+    knobs_dict = k.Knobs().knobs
+    # parameters = knobs_dict.keys()
+    parameters = ["wal_buffers"]
     if connection:
         a = fetch_parameters(connection, parameters)
         print(a)
