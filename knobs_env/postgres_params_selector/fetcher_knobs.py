@@ -1,7 +1,7 @@
 import psycopg2
 import configparser
 
-import knobs as k
+import knobs_env.knobs as k
 
 
 def read_config(filename='db.ini'):
@@ -38,10 +38,10 @@ def fetch_parameters(connection, parameters):
 
 
 if __name__ == "__main__":
-    config = read_config("db.ini")
+    config = read_config("../db.ini")
     connection = connect_to_database(config)
     knobs_dict = k.Knobs().knobs
-    # parameters = knobs_dict.keys()
+    # parame ters = knobs_dict.keys()
     parameters = ["wal_buffers"]
     if connection:
         a = fetch_parameters(connection, parameters)
