@@ -1,4 +1,6 @@
 from stable_baselines3 import DDPG
+from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.env_checker import check_env
 
 import agents.experimental.custom_test_env as env_maker
 
@@ -6,8 +8,11 @@ import agents.experimental.custom_test_env as env_maker
 if __name__ == '__main__':
     env = env_maker.DatabaseTuningEnv()
 
-    model = DDPG('MlpPolicy', env, verbose=1)
-    model.learn(total_timesteps=100)
+    check_env(env)
+    env = DummyVecEnv([lambda: env])
+
+    model = DDPG('MlpPolicy', env)
+    model.learn(total_timesteps=1000)
 
     # Evaluate trained agent
     obs = env.reset()
