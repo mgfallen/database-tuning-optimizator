@@ -48,8 +48,7 @@ if __name__ == "__main__":
 
     connection = connect_to_database(config)
     knobs_dict = k.Knobs().knobs
-    # parame ters = knobs_dict.keys()
-    parameters = ["wal_buffers"]
+    parameters = knobs_dict.keys()
     if connection:
         a = fetch_parameters(connection, parameters)
         print(a)
