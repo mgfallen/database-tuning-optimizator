@@ -1,13 +1,12 @@
 import psycopg2
-import configparser
 
 import knobs_env.knobs as k
 
 
-def read_config(filename='../../db.ini'):
-    config = configparser.ConfigParser()
-    config.read(filename)
-    return config['database']
+# def read_config(filename='../../db.ini'):
+#     config = configparser.ConfigParser()
+#     config.read(filename)
+#     return config['database']
 
 
 def connect_to_database(config):
