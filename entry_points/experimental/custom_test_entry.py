@@ -14,9 +14,12 @@ if __name__ == '__main__':
 
     # Evaluate trained agent
     obs = env.reset()
+    sum_rew = 0
     for _ in range(100):
         action, _ = model.predict(obs)
         obs, reward, done, _ = env.step(action)
+        sum_rew += reward
+        print(sum_rew)
         if done:
-            obs = env.reset()
+            break
 
