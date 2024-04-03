@@ -4,7 +4,7 @@ import configparser
 import knobs_env.knobs as k
 
 
-def read_config(filename='db.ini'):
+def read_config(filename='../../db.ini'):
     config = configparser.ConfigParser()
     config.read(filename)
     return config['database']
