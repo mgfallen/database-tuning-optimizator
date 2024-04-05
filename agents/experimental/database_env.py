@@ -24,6 +24,7 @@ class DbOptimizationEnv(gym.Env):
         self.default_params = {param: value[2] for param, value in db_params.items()}
         self.conn = psycopg2.connect(database="postgres", user="postgres", password="postgres", host="0.0.0.0", port="5432")
         self.conn.autocommit = True
+        print(self.get_full_bencmark())
 
     def reset(self, seed):
         self.set_default_params()
@@ -56,3 +57,8 @@ class DbOptimizationEnv(gym.Env):
         result = subprocess.run(pgbench_cmd, shell=True, capture_output=True, text=True)
         tps = float(result.stdout.split('\n')[-3].split(' = ')[-1])
         return tps
+
+    def get_full_bencmark(self):
+        pgbench_cmd = f"pgbench -c 10 -j 2 -t 1000 my_database_for_benchmark"
+        result = subprocess.run(pgbench_cmd, shell=True, capture_output=True, text=True)
+        return result
