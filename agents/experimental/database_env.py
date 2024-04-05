@@ -1,7 +1,8 @@
 import subprocess
 import numpy as np
-import gym
-from gym import spaces
+import gymnasium as gym
+import psycopg2
+from gymnasium import spaces
 
 
 class DbOptimizationEnv(gym.Env):
@@ -21,10 +22,10 @@ class DbOptimizationEnv(gym.Env):
         })
         self.db_params = db_params
         self.default_params = {param: value[2] for param, value in db_params.items()}
-        self.conn = psycopg2.connect(database="postgres", user="postgres", password="postgres", host="0.0.0.0",
-                                     port="5432")
+        self.conn = psycopg2.connect(database="postgres", user="postgres", password="postgres", host="0.0.0.0", port="5432")
+        self.conn.autocommit = True
 
-    def reset(self):
+    def reset(self, seed):
         self.set_default_params()
         benchmark = self.get_benchmark()
         return {'benchmark': benchmark,
@@ -42,13 +43,13 @@ class DbOptimizationEnv(gym.Env):
         with self.conn.cursor() as cur:
             for param, value in self.default_params.items():
                 cur.execute(f"ALTER SYSTEM SET {param} = {value}")
-                self.conn.commit()
+            self.conn.commit()
 
     def set_params(self, params):
         with self.conn.cursor() as cur:
             for param, value in zip(self.db_params.keys(), params):
                 cur.execute(f"ALTER SYSTEM SET {param} = {value}")
-                self.conn.commit()
+            self.conn.commit()
 
     def get_benchmark(self):
         pgbench_cmd = f"pgbench -c 10 -j 2 -t 1000 my_database_for_benchmark"

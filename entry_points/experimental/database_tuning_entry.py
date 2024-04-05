@@ -17,7 +17,7 @@ if __name__ == '__main__':
     env = DbOptimizationEnv(db_params)
     env = DummyVecEnv([lambda: env])
 
-    model = PPO('MlpPolicy', env, verbose=1)
+    model = PPO('MultiInputPolicy', env, verbose=1)
     model.learn(total_timesteps=10000)
 
     n_eval_episodes = 10
