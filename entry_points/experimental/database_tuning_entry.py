@@ -22,7 +22,7 @@ if __name__ == '__main__':
                  buffer_size=64,
                  learning_starts=32,
                  batch_size=16,
-                 tau=0.99,
+                 tau=0.005,
                  gamma=0.8,
                  seed=42)
     model.learn(total_timesteps=10000)
@@ -31,9 +31,8 @@ if __name__ == '__main__':
 
     eval_results = []
 
-    observation=env.reset()
-
     obs = env.reset()
+    print(obs)
     done = False
     episode_reward = 0.0
 
