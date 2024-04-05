@@ -2,6 +2,7 @@ import subprocess
 import numpy as np
 import gymnasium as gym
 import psycopg2
+import re
 from gymnasium import spaces
 
 
@@ -59,8 +60,9 @@ class DbOptimizationEnv(gym.Env):
     def get_benchmark(self):
         pgbench_cmd = f"sudo -u postgres pgbench -c 10 -j 2 -t 1000 postgres"
         result = subprocess.run(pgbench_cmd, shell=True, capture_output=True, text=True)
-        print(result.stdout.split('\n')[-2].split(' = ')[-1])
-        tps = float(result.stdout.split('\n')[-2].split(' = ')[-1].split(' ')[0])
+        tps_string = result.stdout.split('\n')[-2].split(' = ')[-1]
+        match = re.search(r'\d+\.\d+', tps_string)
+        tps = float(match.group(0))
         return tps
 
     def get_full_bencmark(self):
