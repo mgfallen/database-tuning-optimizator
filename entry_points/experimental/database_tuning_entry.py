@@ -7,19 +7,24 @@ from agents.experimental.database_env import DbOptimizationEnv
 
 if __name__ == '__main__':
     db_params = {
-        "shared_buffers": (32 * 1024 * 1024, 1 * 1024 * 1024 * 1024, 128 * 1024 * 1024),
-        "effective_cache_size": (512 * 1024 * 1024, 4 * 1024 * 1024 * 1024, 1 * 1024 * 1024 * 1024),
-        "work_mem": (4 * 1024 * 1024, 64 * 1024 * 1024, 16 * 1024 * 1024),
-        "maintenance_work_mem": (64 * 1024 * 1024, 1 * 1024 * 1024 * 1024, 256 * 1024 * 1024),
-        "max_parallel_workers_per_gather": (0, 8, 4)
+        "shared_buffers": [32 * 1024 * 1024, 1 * 1024 * 1024 * 1024, 128 * 1024 * 1024],
+        "effective_cache_size": [512 * 1024 * 1024, 4 * 1024 * 1024 * 1024, 1 * 1024 * 1024 * 1024],
+        "work_mem": [4 * 1024 * 1024, 64 * 1024 * 1024, 16 * 1024 * 1024],
+        "maintenance_work_mem": [64 * 1024 * 1024, 1 * 1024 * 1024 * 1024, 256 * 1024 * 1024],
+        "max_parallel_workers_per_gather": [0, 8, 4]
     }
 
     env = DbOptimizationEnv(db_params)
-    print(env.action_space)
-    env = DummyVecEnv([lambda: env])
     print(env)
+    env = DummyVecEnv([lambda: env])
 
-    model = DDPG('MultiInputPolicy', env, verbose=1)
+    model = DDPG('MultiInputPolicy', env, verbose=2,
+                 buffer_size=64,
+                 learning_starts=32,
+                 batch_size=16,
+                 tau=0.99,
+                 gamma=0.8,
+                 seed=42)
     model.learn(total_timesteps=10000)
 
     n_eval_episodes = 10
