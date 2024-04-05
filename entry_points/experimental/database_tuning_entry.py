@@ -1,5 +1,5 @@
 import numpy as np
-from stable_baselines3 import PPO
+from stable_baselines3 import PPO, DDPG
 from stable_baselines3.common.vec_env import DummyVecEnv
 
 from agents.experimental.database_env import DbOptimizationEnv
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     env = DbOptimizationEnv(db_params)
     env = DummyVecEnv([lambda: env])
 
-    model = PPO('MultiInputPolicy', env, verbose=1)
+    model = DDPG('MultiInputPolicy', env, verbose=1)
     model.learn(total_timesteps=10000)
 
     n_eval_episodes = 10
