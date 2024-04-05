@@ -45,20 +45,24 @@ class DbOptimizationEnv(gym.Env):
             for param, value in self.default_params.items():
                 cur.execute(f"ALTER SYSTEM SET {param} = {value}")
             self.conn.commit()
+        restart_command = "sudo systemctl restart postgresql"
+        subprocess.run(restart_command, shell=True, capture_output=True, text=True)
 
     def set_params(self, params):
         with self.conn.cursor() as cur:
             for param, value in zip(self.db_params.keys(), params):
                 cur.execute(f"ALTER SYSTEM SET {param} = {value}")
             self.conn.commit()
+        restart_command = "sudo systemctl restart postgresql"
+        subprocess.run(restart_command, shell=True, capture_output=True, text=True)
 
     def get_benchmark(self):
-        pgbench_cmd = f"pgbench -c 10 -j 2 -t 1000 my_database_for_benchmark"
+        pgbench_cmd = f"sudo -u postgres pgbench -c 10 -j 2 -t 1000 postgres"
         result = subprocess.run(pgbench_cmd, shell=True, capture_output=True, text=True)
         tps = float(result.stdout.split('\n')[-3].split(' = ')[-1])
         return tps
 
     def get_full_bencmark(self):
-        pgbench_cmd = f"pgbench -c 10 -j 2 -t 1000 my_database_for_benchmark"
+        pgbench_cmd = f"sudo -u postgres pgbench -c 10 -j 2 -t 1000 postgres"
         result = subprocess.run(pgbench_cmd, shell=True, capture_output=True, text=True)
         return result
