@@ -60,9 +60,14 @@ class DbOptimizationEnv(gym.Env):
     def get_benchmark(self):
         pgbench_cmd = f"sudo -u postgres pgbench -c 10 -j 2 -t 1000 postgres"
         result = subprocess.run(pgbench_cmd, shell=True, capture_output=True, text=True)
+        tps_string = result.stdout.split('\n')[-2]
+        print(tps_string)
         tps_string = result.stdout.split('\n')[-2].split(' = ')[-1]
+        print(tps_string)
         match = re.search(r'\d+\.\d+', tps_string)
+        print(match)
         tps = float(match.group(0))
+        print(tps)
         return tps
 
     def get_full_bencmark(self):
