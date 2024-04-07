@@ -1,9 +1,8 @@
 import numpy as np
-from stable_baselines3 import PPO, DDPG
+from stable_baselines3 import DDPG
 from stable_baselines3.common.vec_env import DummyVecEnv
 
 from agents.experimental.database_env import DbOptimizationEnv
-
 
 if __name__ == '__main__':
     db_params = {

@@ -7,7 +7,7 @@ from gymnasium import spaces
 
 
 class DbOptimizationEnv(gym.Env):
-    def __init__(self, db_params):
+    def __init__(self, db_params: object) -> object:
         self.action_space = spaces.Box(
             low=np.array([param[0] for param in db_params.values()]),
             high=np.array([param[1] for param in db_params.values()]),
