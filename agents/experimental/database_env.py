@@ -13,14 +13,11 @@ class DbOptimizationEnv(gym.Env):
             high=np.array([param[1] for param in db_params.values()]),
             dtype=np.float32
         )
-        self.observation_space = spaces.Dict({
-            'benchmark': spaces.Box(low=0, high=np.inf, shape=(1,), dtype=np.float32),
-            'params': spaces.Box(
+        self.observation_space = spaces.Box(
                 low=np.array([param[0] for param in db_params.values()]),
                 high=np.array([param[1] for param in db_params.values()]),
                 dtype=np.float32
             )
-        })
         self.db_params = db_params
         self.default_params = {param: value[2] for param, value in db_params.items()}
         self.conn = psycopg2.connect(database="postgres", user="postgres", password="postgres", host="0.0.0.0", port="5432")
@@ -29,17 +26,15 @@ class DbOptimizationEnv(gym.Env):
 
     def reset(self, seed):
         self.set_default_params()
-        benchmark = self.get_benchmark()
-        return {'benchmark': benchmark,
-                'params': np.array([self.default_params[param] for param in self.db_params.keys()])}
+        return np.array([self.default_params[param] for param in self.db_params.keys()])
 
     def step(self, action):
         self.set_params(action)
         benchmark = self.get_benchmark()
         reward = -benchmark
         done = False
-        info = {}
-        return {'benchmark': benchmark, 'params': action}, reward, done, False, info
+        info = {'benchmark': benchmark}
+        return action, reward, done, False, info
 
     def set_default_params(self):
         with self.conn.cursor() as cur:
