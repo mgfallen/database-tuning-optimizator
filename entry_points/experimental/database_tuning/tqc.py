@@ -4,7 +4,6 @@ from stable_baselines3.common.vec_env import DummyVecEnv
 
 from agents.experimental.database_env import DbOptimizationEnv
 
-
 if __name__ == '__main__':
     db_params = {
         "shared_buffers": [32 * 1024 * 1024, 1 * 1024 * 1024 * 1024, 128 * 1024 * 1024],
@@ -19,12 +18,12 @@ if __name__ == '__main__':
     env = DummyVecEnv([lambda: env])
 
     model = TQC('MultiInputPolicy', env, verbose=2,
-                 buffer_size=64,
-                 learning_starts=32,
-                 batch_size=16,
-                 tau=0.005,
-                 gamma=0.8,
-                 seed=42)
+                buffer_size=64,
+                learning_starts=32,
+                batch_size=16,
+                tau=0.005,
+                gamma=0.8,
+                seed=42)
     model.learn(total_timesteps=10000)
 
     n_eval_episodes = 10
