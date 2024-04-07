@@ -1,5 +1,6 @@
 import numpy as np
-from stable_baselines3 import PPO, DDPG
+from stable_baselines3 import DDPG
+from stable_baselines3.common.noise import NormalActionNoise
 from stable_baselines3.common.vec_env import DummyVecEnv
 
 from agents.experimental.database_env import DbOptimizationEnv
@@ -18,13 +19,18 @@ if __name__ == '__main__':
     print(env)
     env = DummyVecEnv([lambda: env])
 
-    model = DDPG('MultiInputPolicy', env, verbose=2,
+    n_actions = db_params.keys().__len__()
+
+    action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1 * np.ones(n_actions))
+
+    model = DDPG('MlpPolicy', env, verbose=2,
                  buffer_size=64,
                  learning_starts=32,
                  batch_size=16,
                  tau=0.005,
                  gamma=0.8,
-                 seed=42)
+                 seed=42,
+                 action_noise=action_noise)
     model.learn(total_timesteps=10000)
 
     n_eval_episodes = 10
