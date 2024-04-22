@@ -1,3 +1,6 @@
+from pathlib import Path
+import sys
+
 import numpy as np
 from stable_baselines3 import DDPG
 from stable_baselines3.common.noise import NormalActionNoise
@@ -7,6 +10,11 @@ from agents.experimental.database_env import DbOptimizationEnv
 
 
 if __name__ == '__main__':
+    # REMOVE ME - tmp fix
+    current_dir = Path(__file__).resolve().parent
+    source_root = current_dir.parent.parent.parent
+    sys.path.append(str(source_root))
+
     db_params = {
         "shared_buffers": [32 * 1024 * 1024, 1 * 1024 * 1024 * 1024, 128 * 1024 * 1024],
         "effective_cache_size": [512 * 1024 * 1024, 4 * 1024 * 1024 * 1024, 1 * 1024 * 1024 * 1024],
