@@ -20,7 +20,7 @@ class DbOptimizationEnv(gym.Env):
             )
         self.db_params = db_params
         self.default_params = {param: value[2] for param, value in db_params.items()}
-        self.conn = psycopg2.connect(database="postgres", user="postgres", password="postgres", host="0.0.0.0", port="5432")
+        self.conn = psycopg2.connect(database="postgres", user="postgres", password="postgres", host="0.0.0.0", port="5433")
         self.conn.autocommit = True
         print(self.get_full_bencmark())
 
