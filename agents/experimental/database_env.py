@@ -59,7 +59,7 @@ class DbOptimizationEnv(gym.Env):
         subprocess.run(restart_command, shell=True, capture_output=True, text=True)
 
     def get_benchmark(self):
-        pgbench_cmd = f"sudo -u postgres pgbench -c 10 -j 2 -t 1000 postgres"
+        pgbench_cmd = self.get_default_cmd_pgbench()
         result = subprocess.run(pgbench_cmd, shell=True, capture_output=True, text=True)
         tps_string = result.stdout.split('\n')[-2].split(' = ')[-1]
         match = re.search(r'\d+\.\d+', tps_string)
@@ -67,22 +67,22 @@ class DbOptimizationEnv(gym.Env):
         return tps
 
     def get_full_bencmark(self):
+        pgbench_cmd = self.get_default_cmd_pgbench()
+        result = subprocess.run(pgbench_cmd, shell=True, capture_output=True, text=True)
+        return result.stdout
+
+    def get_default_cmd_pgbench(self):
         pgbench_cmd = ["sudo", "-u", "postgres", "pgbench"]
 
-        if 'num_clients' in self.pgbench_params: # default value is 1
+        if 'num_clients' in self.pgbench_params:  # default value is 1
             pgbench_cmd.extend(["-c", str(self.pgbench_params['num_clients'])])
-
-        if 'num_thread' in self.pgbench_params: # dafault value is a number of VCore
+        if 'num_thread' in self.pgbench_params:  # dafault value is a number of VCore
             pgbench_cmd.extend(["-j", str(self.pgbench_params['num_thread'])])
-
-        if 'num_transactions' in self.pgbench_params: # default value is 10
+        if 'num_transactions' in self.pgbench_params:  # default value is 10
             pgbench_cmd.extend(["-t", str(self.pgbench_params['num_transactions'])])
-
-        if 'database_size' in self.pgbench_params: # default value is 1
+        if 'database_size' in self.pgbench_params:  # default value is 1
             pgbench_cmd.extend(["-s", str(self.pgbench_params['database_size'])])
 
         pgbench_cmd.append("postgres")
-
-        result = subprocess.run(pgbench_cmd, shell=True, capture_output=True, text=True)
-        return result.stdout
+        return pgbench_cmd
 
