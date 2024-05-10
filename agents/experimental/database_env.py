@@ -7,7 +7,10 @@ from gymnasium import spaces
 
 
 class DbOptimizationEnv(gym.Env):
-    def __init__(self, db_params: object) -> object:
+    def __init__(self, db_params: dict, pgbench_params: dict) -> None:
+        self.db_params = db_params
+        self.pgbench_params = pgbench_params
+
         self.action_space = spaces.Box(
             low=np.array([param[0] for param in db_params.values()]),
             high=np.array([param[1] for param in db_params.values()]),
@@ -18,13 +21,12 @@ class DbOptimizationEnv(gym.Env):
                 high=np.array([param[1] for param in db_params.values()]),
                 dtype=np.float32
             )
-        self.db_params = db_params
         self.default_params = {param: value[2] for param, value in db_params.items()}
-        self.conn = psycopg2.connect(database="postgres", user="postgres", password="postgres", host="0.0.0.0", port="5433")
+        self.conn = psycopg2.connect(**db_params)
         self.conn.autocommit = True
-        print(self.get_full_bencmark())
+        print(self.get_full_bencmark()) # system monitoring
 
-    def reset(self, seed):
+    def reset(self, seed=None):
         self.set_default_params()
         return np.array([self.default_params[param] for param in self.db_params.keys()])
 
@@ -40,6 +42,7 @@ class DbOptimizationEnv(gym.Env):
         with self.conn.cursor() as cur:
             for param, value in self.default_params.items():
                 cur.execute(f"ALTER SYSTEM SET {param} = {value}")
+                cur.execute("SELECT pg_reload_conf();")
             self.conn.commit()
         restart_command = "sudo systemctl restart postgresql"
         subprocess.run(restart_command, shell=True, capture_output=True, text=True)
@@ -47,7 +50,10 @@ class DbOptimizationEnv(gym.Env):
     def set_params(self, params):
         with self.conn.cursor() as cur:
             for param, value in zip(self.db_params.keys(), params):
+                if self.db_params[param][0] == "enum":
+                    value = str(value)
                 cur.execute(f"ALTER SYSTEM SET {param} = {value}")
+                cur.execute("SELECT pg_reload_conf();")
             self.conn.commit()
         restart_command = "sudo systemctl restart postgresql"
         subprocess.run(restart_command, shell=True, capture_output=True, text=True)
@@ -61,6 +67,22 @@ class DbOptimizationEnv(gym.Env):
         return tps
 
     def get_full_bencmark(self):
-        pgbench_cmd = f"sudo -u postgres pgbench -c 10 -j 2 -t 1000 postgres"
+        pgbench_cmd = ["sudo", "-u", "postgres", "pgbench"]
+
+        if 'num_clients' in self.pgbench_params: # default value is 1
+            pgbench_cmd.extend(["-c", str(self.pgbench_params['num_clients'])])
+
+        if 'num_thread' in self.pgbench_params: # dafault value is a number of VCore
+            pgbench_cmd.extend(["-j", str(self.pgbench_params['num_thread'])])
+
+        if 'num_transactions' in self.pgbench_params: # default value is 10
+            pgbench_cmd.extend(["-t", str(self.pgbench_params['num_transactions'])])
+
+        if 'database_size' in self.pgbench_params: # default value is 1
+            pgbench_cmd.extend(["-s", str(self.pgbench_params['database_size'])])
+
+        pgbench_cmd.append("postgres")
+
         result = subprocess.run(pgbench_cmd, shell=True, capture_output=True, text=True)
-        return result
+        return result.stdout
+
