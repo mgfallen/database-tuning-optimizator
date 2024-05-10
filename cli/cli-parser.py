@@ -1,4 +1,6 @@
+import re
 import subprocess
+from pathlib import Path
 
 from PyInquirer import prompt
 
@@ -8,62 +10,68 @@ def start_search():
         {
             'type': 'input',
             'name': 'num_params',
-            'message': 'Введите число параметров для настройки:',
-            'validate': lambda x: len(x) > 0 or 'Вы должны ввести число параметров'
+            'message': 'Enter the number of parameters to configure:',
+            'validate': lambda x: 0 < len(x) <= 45 or 'You must enter the number of parameters in range of 1 to 45',
+            'default': 45
         },
         {
             'type': 'input',
             'name': 'param_set',
-            'message': 'Введите конкретный набор параметров для настройки:',
-            'validate': lambda x: len(x) > 0 or 'Вы должны ввести набор параметров'
+            'message': 'Enter a specific set of parameters to configure:',
+            'validate': validate_param_set,
+            'default': None
         },
         {
             'type': 'input',
             'name': 'num_epochs',
-            'message': 'Введите число эпох для обучения модели:',
-            'validate': lambda x: len(x) > 0 or 'Вы должны ввести число эпох',
+            'message': 'Enter the number of epochs for model training:',
+            'validate': lambda x: len(x) > 0 or 'You must enter the positive number of epochs',
             'default': 100
         },
         {
             'type': 'list',
             'name': 'device',
-            'message': 'Выберите устройство для обучения модели:',
+            'message': 'Choose the device for model training:',
             'choices': ['CPU', 'GPU'],
             'default': 'CPU'
         },
         {
             'type': 'input',
             'name': 'config_file',
-            'message': 'Введите путь к конфигурационному файлу сценария использования базы данных:',
-            'validate': lambda x: len(x) > 0 or 'Вы должны ввести путь к конфигурационному файлу',
+            'message': 'Enter the path to the configuration file for the database usage scenario:',
+            'validate': validate_config_file_and_sql,
             'default': None
         },
         {
             'type': 'input',
             'name': 'rl_algorithm',
-            'message': 'Введите алгоритм RL для использования:',
-            'validate': lambda x: len(x) > 0 or 'Вы должны ввести алгоритм RL',
-            'default': 'DDPG'
+            'message': 'Enter the RL algorithm to use:',
+            'validate': validate_rl_algorithm,
+            'default': 'TQC'
         },
         {
             'type': 'input',
             'name': 'model_hparams',
-            'message': 'Введите гиперпараметры модели в формате ключ-значение:',
-            'validate': lambda x: len(x) > 0 or 'Вы должны ввести гиперпараметры модели',
+            'message': 'Enter model hyperparameters in key-value format:',
+            'validate': lambda x: len(x) > 0 or 'You must enter model hyperparameters',
             'default': None
         }
     ]
 
     answers = prompt(questions)
 
-    print(f"Запуск процесса поиска оптимальных параметров с параметрами:")
-    print(f"Число параметров: {answers['num_params']}")
-    print(f"Набор параметров: {answers['param_set']}")
-    print(f"Число эпох: {answers['num_epochs']}")
-    print(f"Устройство для обучения: {answers['device']}")
-    print(f"Конфигурационный файл: {answers['config_file']}")
-    print(f"Алгоритм RL: {answers['rl_algorithm']}")
-    print(f"Гиперпараметры модели: {answers['model_hparams']}")
+    if answers['help']:
+        print("\nParameters:")
+        print("--num-params: Number of parameters to optimize. Range: 1-45. Default: All parameters.")
+        print(
+            "--params: Specific set of parameters for optimization. Comma-separated string. Not compatible with --num-params. Default: All parameters.")
+        print("--epochs: Number of epochs for model training. Default: 100.")
+        print("--device: Physical device for model training (CPU or GPU). Default: CPU.")
+        print(
+            "--config: Path to the configuration file containing database usage scenario and pgbench SQL transactions. Example provided in Listing 1.")
+        print("--rl-algorithm: RL algorithm to use for optimization. Choices: TQC, SAC, DDPG, TRPO, TD3. Default: TQC.")
+        print(
+            "--hyperparameters: Model hyperparameters such as learning rate, discount factor, batch size, etc., for different models. Each algorithm has its own set of hyperparameters.")
 
     subprocess.run(['python -m', '../entry_points/experimental/database_tuning_entry',
                     '--num_params', answers['num_params'],
@@ -73,6 +81,55 @@ def start_search():
                     '--config_file', answers['config_file'],
                     '--rl_algorithm', answers['rl_algorithm'],
                     '--model_hparams', answers['model_hparams']], check=True)
+
+
+def validate_param_set(x):
+    if not x:
+        return 'You must enter a set of parameters'
+    pattern = r'^[a-zA-Z0-9\s\,]+$'
+    if not re.match(pattern, x):
+        return 'Invalid parameter set. Use comma-separated string of literals.'
+    return True
+
+
+def validate_sql_transaction(x):
+    if not x:
+        return 'You must enter the path to the configuration file'
+    sql_keywords = r'(BEGIN|INSERT|UPDATE|SELECT|COMMIT)'
+    if not re.search(sql_keywords, x):
+        return 'The configuration file does not contain a valid SQL transaction.'
+    return True
+
+
+def validate_config_file_path(x):
+    if not x:
+        return 'You must enter the path to the configuration file'
+    path = Path(x)
+    if not path.is_file():
+        return 'The specified file does not exist or is not accessible.'
+    return True
+
+
+def validate_config_file_and_sql(x):
+    if not validate_config_file_path(x):
+        return False
+    with open(x, 'r') as file:
+        content = file.read()
+    if not validate_sql_transaction(content):
+        return False
+    return True
+
+
+def validate_rl_algorithm(x):
+    valid_rl_algorithms = ['TQC', 'TD3', 'TRPO', 'DDPG', 'SAC']
+
+    if not x:
+        return 'You must enter the RL algorithm'
+
+    if x not in valid_rl_algorithms:
+        return f'Invalid RL algorithm. Choose from {", ".join(valid_rl_algorithms)}.'
+
+    return True
 
 
 if __name__ == "__main__":
