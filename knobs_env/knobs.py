@@ -1,7 +1,7 @@
 """
     description: all known knobs in dict format
     {'name_param': ['type_format', ['possible_values]]}, where
-    type_format - integer/float/string
+    type_format - integer/float/enum
     possible_values - enum strings/min-max values
 
     for integer values format like this:
