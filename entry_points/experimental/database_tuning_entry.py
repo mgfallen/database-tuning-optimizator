@@ -15,10 +15,10 @@ if __name__ == '__main__':
     parser.add_argument('--param_set', type=str, required=True, help='Конкретный набор параметров для настройки')
     parser.add_argument('--num_epochs', type=int, required=True, help='Число эпох для обучения модели')
     parser.add_argument('--device', choices=['CPU', 'GPU'], required=True, help='Устройство для обучения модели')
-    parser.add_argument('--config_file', type=str, required=True, help='Путь к конфигурационному файлу сценария использования базы данных')
+    parser.add_argument('--config_file', type=str, required=True,
+                        help='Путь к конфигурационному файлу сценария использования базы данных')
     parser.add_argument('--rl_algorithm', type=str, required=True, help='Алгоритм RL для использования')
     parser.add_argument('--model_hparams', type=str, required=True, help='Гиперпараметры модели в формате JSON')
-
 
     # db_params = {
     #     "shared_buffers": [32 * 1024 * 1024, 1 * 1024 * 1024 * 1024, 128 * 1024 * 1024],
@@ -28,9 +28,9 @@ if __name__ == '__main__':
     #     "max_parallel_workers_per_gather": [0, 8, 4]
     # }
 
-    db_params = KnobsSelector.select_and_evaluate()
+    selector = KnobsSelector()
+    db_params = selector.select_and_evaluate()
     pgbench_params = parser.__dict__
-
 
     env = DbOptimizationEnv(db_params, pgbench_params)
 
