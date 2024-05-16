@@ -1,5 +1,6 @@
 from knobs import Knobs
 
+
 class KnobsSelector:
     def __init__(self):
         self.knobs = Knobs()
