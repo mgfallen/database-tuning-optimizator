@@ -11,8 +11,8 @@ def start_search():
             'type': 'input',
             'name': 'num_params',
             'message': 'Enter the number of parameters to configure:',
-            'validate': lambda x: 0 < len(x) <= 45 or 'You must enter the number of parameters in range of 1 to 45',
-            'default': 45
+            'validate': lambda x: 0 < len(x) <= 26 or 'You must enter the number of parameters in range of 1 to 26',
+            'default': 26
         },
         {
             'type': 'input',
@@ -62,7 +62,7 @@ def start_search():
 
     if answers['help']:
         print("\nParameters:")
-        print("--num-params: Number of parameters to optimize. Range: 1-45. Default: All parameters.")
+        print("--num-params: Number of parameters to optimize. Range: 1-26. Default: All parameters.")
         print(
             "--params: Specific set of parameters for optimization. Comma-separated string. Not compatible with --num-params. Default: All parameters.")
         print("--epochs: Number of epochs for model training. Default: 100.")
