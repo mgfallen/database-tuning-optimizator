@@ -11,7 +11,7 @@ from knobs_env.knobs_selector import KnobsSelector
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Скрипт для обработки параметров')
-    parser.add_argument('--num_params', type=int, required=True, help='Число параметров для настройки', default=)
+    parser.add_argument('--num_params', type=int, required=True, help='Число параметров для настройки')
     parser.add_argument('--param_set', type=str, required=True, help='Конкретный набор параметров для настройки')
     parser.add_argument('--num_epochs', type=int, required=True, help='Число эпох для обучения модели')
     parser.add_argument('--device', choices=['CPU', 'GPU'], required=True, help='Устройство для обучения модели')
