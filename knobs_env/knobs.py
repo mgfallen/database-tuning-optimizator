@@ -23,8 +23,8 @@
 """
 
 # TODO make a flag of knob setting only by start, and for tuning them we need to restart server
-# TODO make a "off" value that not in interval, like @value in [0,10], but can have @value=-1 for turning off parameter
-# TODO mark a "danger" parameters, that could crash a DB without a problem - think how we can pass them
+# TODO make a "turning off" value that not in interval, like @value in [0,10], but can have @value=-1 for turning off parameter
+# TODO mark a set "danger" parameters, that could crash a DB without a problem - think how we can pass them - fixed by picking only safe set of params
 
 memory = 1 * 1024 * 1024 * 1024  # 1 GB of RAM
 disk = 10 * 1024 * 1024 * 1024  # 10 GB in disk
