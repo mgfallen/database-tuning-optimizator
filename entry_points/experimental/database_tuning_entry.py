@@ -65,7 +65,8 @@ if __name__ == '__main__':
 
         print(f"Reward is: {reward}")
 
-    eval_results.append(episode_reward)
+        eval_results.append(reward)
+
     mean_reward = np.mean(eval_results)
     std_reward = np.std(eval_results)
 
