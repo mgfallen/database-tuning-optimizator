@@ -38,5 +38,5 @@ class KnobsSelector:
 
     def evaluate_knob(self, knob_name):
         knob_info = self.knobs.knobs(knob_name, None)
-        if not knob_info:
-            return f"{knob_name} not founded."
+        if knob_info:
+            return knob_info
