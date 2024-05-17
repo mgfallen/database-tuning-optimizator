@@ -34,8 +34,7 @@ max_files_per_process = 2000
 
 class Knobs:
     def __init__(self):
-        self.knobs = {}
-        self.init_knobs()
+        self.knobs = self.init_knobs()
 
     def init_knobs(self):
         extended_knobs = {
@@ -264,5 +263,5 @@ class Knobs:
             "shared_memory_size": ["integer", [1024 * 1024, 4 * 1024 * 1024, 1024 * 1024]],
 
         }
-        self.knobs = extended_knobs
+        return extended_knobs
 
