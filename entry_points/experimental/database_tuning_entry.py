@@ -51,7 +51,6 @@ if __name__ == '__main__':
     model.learn(total_timesteps=10000)
 
     n_eval_episodes = pgbench_params.get("--num_epochs")
-
     eval_results = []
 
     obs = env.reset()
@@ -64,8 +63,7 @@ if __name__ == '__main__':
 
         obs, reward, done, info = env.step(action)
 
-        episode_reward += reward
-        print(f"Reward is: {episode_reward}")
+        print(f"Reward is: {reward}")
 
     eval_results.append(episode_reward)
     mean_reward = np.mean(eval_results)
