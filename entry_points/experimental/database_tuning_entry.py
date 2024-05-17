@@ -28,8 +28,7 @@ if __name__ == '__main__':
     #     "max_parallel_workers_per_gather": [0, 8, 4]
     # }
 
-    selector = KnobsSelector()
-    db_params = selector.select_and_evaluate()
+    db_params = KnobsSelector().select_and_evaluate()
     pgbench_params = parser.__dict__
 
     env = DbOptimizationEnv(db_params, pgbench_params)
@@ -51,7 +50,7 @@ if __name__ == '__main__':
                  action_noise=action_noise)
     model.learn(total_timesteps=10000)
 
-    n_eval_episodes = 10
+    n_eval_episodes = pgbench_params.get("--num_epochs")
 
     eval_results = []
 
