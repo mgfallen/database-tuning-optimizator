@@ -76,7 +76,7 @@ class DbOptimizationEnv(gym.Env):
 
         if 'num_clients' in self.pgbench_params:  # default value is 1
             pgbench_cmd.extend(["-c", str(self.pgbench_params['num_clients'])])
-        if 'num_thread' in self.pgbench_params:  # dafault value is a number of VCore
+        if 'num_thread' in self.pgbench_params:  # default value is a number of VCore
             pgbench_cmd.extend(["-j", str(self.pgbench_params['num_thread'])])
         if 'num_transactions' in self.pgbench_params:  # default value is 10
             pgbench_cmd.extend(["-t", str(self.pgbench_params['num_transactions'])])
