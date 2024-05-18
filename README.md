@@ -5,3 +5,5 @@
 Суть проекта - сравнение различных алгоритмов машинного обучения в рамках оптимизации параметров PostgreSQL. 
 
 Бенчмарк:
+
+![image](https://github.com/mgfallen/database-tuning-optimizator/assets/57752276/e711f50b-3109-406b-9f35-b592096bc91d)
