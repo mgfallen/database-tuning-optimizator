@@ -12,7 +12,7 @@ def start_search():
             'name': 'num_params',
             'message': 'Enter the number of parameters to configure:',
             'validate': lambda x: 0 < len(x) <= 26 or 'You must enter the number of parameters in range of 1 to 26',
-            'default': 26
+            'default': '26'
         },
         {
             'type': 'input',
@@ -26,7 +26,7 @@ def start_search():
             'name': 'num_epochs',
             'message': 'Enter the number of epochs for model training:',
             'validate': lambda x: len(x) > 0 or 'You must enter the positive number of epochs',
-            'default': 100
+            'default': '100'
         },
         {
             'type': 'list',
