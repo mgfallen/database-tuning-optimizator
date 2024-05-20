@@ -1,8 +1,26 @@
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 from PyInquirer import prompt
+
+
+def print_help():
+    print("\nParameters:")
+    print("--num-params: Number of parameters to optimize. Range: 1-26. Default: All parameters.")
+    print(
+        "--params: Specific set of parameters for optimization. Comma-separated string. Not compatible with "
+        "--num-params. Default: All parameters.")
+    print("--epochs: Number of epochs for model training. Default: 100.")
+    print("--device: Physical device for model training (CPU or GPU). Default: CPU.")
+    print(
+        "--config: Path to the configuration file containing database usage scenario and pgbench SQL "
+        "transactions. Example provided in Listing 1.")
+    print("--rl-algorithm: RL algorithm to use for optimization. Choices: TQC, SAC, DDPG, TRPO, TD3. Default: TQC.")
+    print(
+        "--hyperparameters: Model hyperparameters such as learning rate, discount factor, batch size, etc., "
+        "for different models. Each algorithm has its own set of hyperparameters.")
 
 
 def start_search():
@@ -60,18 +78,9 @@ def start_search():
 
     answers = prompt(questions)
 
-    if answers['help']:
-        print("\nParameters:")
-        print("--num-params: Number of parameters to optimize. Range: 1-26. Default: All parameters.")
-        print(
-            "--params: Specific set of parameters for optimization. Comma-separated string. Not compatible with --num-params. Default: All parameters.")
-        print("--epochs: Number of epochs for model training. Default: 100.")
-        print("--device: Physical device for model training (CPU or GPU). Default: CPU.")
-        print(
-            "--config: Path to the configuration file containing database usage scenario and pgbench SQL transactions. Example provided in Listing 1.")
-        print("--rl-algorithm: RL algorithm to use for optimization. Choices: TQC, SAC, DDPG, TRPO, TD3. Default: TQC.")
-        print(
-            "--hyperparameters: Model hyperparameters such as learning rate, discount factor, batch size, etc., for different models. Each algorithm has its own set of hyperparameters.")
+    if '--help' in sys.argv:
+        print_help()
+        return
 
     subprocess.run(['python -m', '../entry_points/experimental/database_tuning_entry',
                     '--num_params', answers['num_params'],
