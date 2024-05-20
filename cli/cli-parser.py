@@ -7,7 +7,7 @@ from PyInquirer import prompt
 
 
 def print_help():
-    print("\nParameters:")
+    print("Parameters:")
     print("--num-params: Number of parameters to optimize. Range: 1-26. Default: All parameters.")
     print(
         "--params: Specific set of parameters for optimization. Comma-separated string. Not compatible with "
@@ -82,7 +82,7 @@ def start_search():
 
     answers = prompt(questions)
 
-    subprocess.run(['python -m', '../entry_points/experimental/database_tuning_entry',
+    subprocess.run(['python', '-m', '../entry_points/experimental/database_tuning_entry',
                     '--num_params', answers['num_params'],
                     '--param_set', answers['param_set'],
                     '--num_epochs', answers['num_epochs'],
