@@ -76,11 +76,11 @@ def start_search():
         }
     ]
 
-    answers = prompt(questions)
-
     if '--help' in sys.argv:
         print_help()
         return
+
+    answers = prompt(questions)
 
     subprocess.run(['python -m', '../entry_points/experimental/database_tuning_entry',
                     '--num_params', answers['num_params'],
