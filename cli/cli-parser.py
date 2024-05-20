@@ -19,7 +19,7 @@ def start_search():
             'name': 'param_set',
             'message': 'Enter a specific set of parameters to configure:',
             'validate': validate_param_set,
-            'default': None
+            'default': ''
         },
         {
             'type': 'input',
@@ -40,7 +40,7 @@ def start_search():
             'name': 'config_file',
             'message': 'Enter the path to the configuration file for the database usage scenario:',
             'validate': validate_config_file_and_sql,
-            'default': None
+            'default': ''
         },
         {
             'type': 'input',
@@ -54,7 +54,7 @@ def start_search():
             'name': 'model_hparams',
             'message': 'Enter model hyperparameters in key-value format:',
             'validate': lambda x: len(x) > 0 or 'You must enter model hyperparameters',
-            'default': None
+            'default': ''
         }
     ]
 
